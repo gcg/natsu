@@ -1,0 +1,104 @@
+#!/usr/bin/env php
+<?php 
+
+/**
+* 
+*/
+class Main
+{
+    
+  private $config_file;
+  private $config_dir;
+  private $secret_key;
+  private $secret_id;
+  private $token;
+  public  $api_url;
+
+  function __construct()
+  {
+
+    $this->config_dir = $_SERVER['HOME']."/.natsu";
+    $this->config_file = $this->config_dir."/config.json";
+
+    $this->getConfig();
+
+  }
+
+  /**
+   * reads the config values from the config file.
+   **/
+  private function getConfig()
+  {
+    if (!file_exists($this->config_file)) {
+      $this->writeConfigFile();
+    }
+    
+    $config = json_decode(file_get_contents($this->config_file));
+    print_r($config);
+  }
+
+  /**
+   * no config file exists, lets try to create one. 
+   **/
+  private function writeConfigFile()
+  {
+    if (!is_dir($this->config_dir)) {
+      try {
+        mkdir($this->config_dir);
+      } catch (Exception $e) {
+        $this->exitWithError($e);
+      }
+    }
+
+    $config = array(
+      'api_url' => '',
+      'secret_key' => '',
+      'secret_id' => ''
+    );
+
+    try {
+      file_put_contents($this->config_file, json_encode($config));
+    } catch (Exception $e) {
+      $this->exitWithError($e);
+    }
+
+
+  }
+
+  /**
+   * exits the program with the givin error
+   **/
+  private function exitWithError($error = null)
+  {
+    $this->error($error);
+    exit;
+  }
+
+  /**
+   * prints a msg with the error colors
+   **/
+  public function error($msg)
+  {
+    echo $msg."\n";
+  }
+
+  /**
+   * prints a msg with the success colors
+   **/
+  public function success($msg)
+  {
+    echo $msg."\n";
+  }
+
+  /**
+   * prints a msg with the info colors
+   **/
+  public function info($msg)
+  {
+    echo $msg."\n";
+  }
+  
+}
+
+$request = new Main; 
+
